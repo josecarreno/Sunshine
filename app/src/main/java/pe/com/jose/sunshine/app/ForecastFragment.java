@@ -1,5 +1,7 @@
 package pe.com.jose.sunshine.app;
 
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,8 +14,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +35,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ForecastFragment extends Fragment {
+
+    private ArrayAdapter<String> mForecastAdapter;
 
     public ForecastFragment() {
     }
@@ -79,7 +85,7 @@ public class ForecastFragment extends Fragment {
 
         List<String> weekForecast = new ArrayList<String>(Arrays.asList(forecastArray));
 
-        ArrayAdapter<String> mForecastAdapter = new ArrayAdapter<String>(
+        mForecastAdapter = new ArrayAdapter<String>(
                 getActivity(),
                 R.layout.list_item_forecast,
                 R.id.list_item_forecast_textview,
@@ -89,6 +95,19 @@ public class ForecastFragment extends Fragment {
 
         ListView listView = (ListView) rootView.findViewById(R.id.listView_forecast);
         listView.setAdapter(mForecastAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Context context = getActivity();
+                String forecast = mForecastAdapter.getItem(position);
+                int duration = Toast.LENGTH_SHORT;
+
+                Intent intent = new Intent(context, DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, forecast);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
@@ -279,6 +298,17 @@ public class ForecastFragment extends Fragment {
                 }
             }
             return null;
+        }
+
+        @Override
+        public void onPostExecute(String[] result){
+            if (result != null) {
+                 mForecastAdapter.clear();
+                 for(String dayForecastStr : result) {
+                     mForecastAdapter.add(dayForecastStr);
+                     }
+                 // New data is back from the server. Hooray!
+            }
         }
     }
 }
