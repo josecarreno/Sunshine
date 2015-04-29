@@ -101,7 +101,6 @@ public class ForecastFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Context context = getActivity();
                 String forecast = mForecastAdapter.getItem(position);
-                int duration = Toast.LENGTH_SHORT;
 
                 Intent intent = new Intent(context, DetailActivity.class)
                         .putExtra(Intent.EXTRA_TEXT, forecast);
